@@ -1,0 +1,28 @@
+[
+  {
+    "ASDFGWJ3278J": {
+          "name":"Idowu John Oluwatosin",
+          "id": "ASDFGWJ3278J",
+          "date_created": "23 May, 2018",
+          "date_expiring": "23 May, 2022",
+          "phone_number": "08022367382",
+          "email": "example@example.com"
+    },
+    "PSKFGWJ3878L": {
+          "name":"Idowu John Oluwatosin",
+          "id": "PSKFGWJ3878L",
+          "date_created": "23 May, 2018",
+          "date_expiring": "23 May, 2022",
+          "phone_number": "08022367382",
+          "email": "example@example.com"
+    },
+    "LMDKNWJ3988J": {
+          "name":"Idowu John Oluwatosin",
+          "id": "LMDKNWJ3988J",
+          "date_created": "23 May, 2018",
+          "date_expiring": "23 May, 2022",
+          "phone_number": "08022367382",
+          "email": "example@example.com"
+    }
+  }
+]
