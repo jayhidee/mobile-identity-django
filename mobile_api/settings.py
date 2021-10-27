@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-q82z*en_711so^q=bbxyh0h!x++n$l55qyu-(!*$y!b7h6f0zh
 DEBUG = True
 
 ALLOWED_HOSTS = ['nameless-retreat-73704.herokuapp.com',
-                 'http://localhost', 'http://127.0.0.1']
+                 'localhost', '127.0.0.1']
 
 
 # Application definition

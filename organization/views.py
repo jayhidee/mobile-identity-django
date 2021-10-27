@@ -55,5 +55,5 @@ class IssOrgD(APIView):
         serializer = OrgSerializer(org, many=True)
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User Viewed Organization (" + serializer.data['name'] + ")")
+            user_id=request.user, action="User Viewed Organization ")
         return Response(serializer.data)
