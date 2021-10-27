@@ -69,28 +69,28 @@ CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:8100",
     "http://localhost"
 ]
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://\w+\.example\.com$",
-]
-CORS_ALLOW_METHODS = [
-    "DELETE",
-    "GET",
-    "OPTIONS",
-    "PATCH",
-    "POST",
-    "PUT",
-]
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
+# CORS_ALLOWED_ORIGIN_REGEXES = [
+#     r"^https://\w+\.example\.com$",
+# ]
+# CORS_ALLOW_METHODS = [
+#     "DELETE",
+#     "GET",
+#     "OPTIONS",
+#     "PATCH",
+#     "POST",
+#     "PUT",
+# ]
+# CORS_ALLOW_HEADERS = [
+#     "accept",
+#     "accept-encoding",
+#     "authorization",
+#     "content-type",
+#     "dnt",
+#     "origin",
+#     "user-agent",
+#     "x-csrftoken",
+#     "x-requested-with",
+# ]
 
 ROOT_URLCONF = 'mobile_api.urls'
 
