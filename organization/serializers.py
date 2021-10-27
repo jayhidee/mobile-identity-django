@@ -5,7 +5,7 @@ from .models import IssuingOrginization
 class OrgSerializer(serializers.ModelSerializer):
     class Meta:
         model = IssuingOrginization
-        fields = ['name', 'api', 'email', 'phone_number', 'address']
+        fields = ['id', 'name', 'api', 'email', 'phone_number', 'address']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)

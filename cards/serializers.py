@@ -9,7 +9,7 @@ class CardSerializer(serializers.ModelSerializer):
         # verified = False
         issuing_organization = serializers.CharField(read_only=True,
                                                      source='issuing_organization.id')
-        fields = ['card_id', 'issuing_organization',
+        fields = ['id', 'card_id', 'issuing_organization',
                   'date_expiring', 'date_issued']
 
     def create(self, validated_data):

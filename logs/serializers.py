@@ -6,7 +6,7 @@ class UserLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAction
         # user_id = serializers.RelatedField(source='user', read_only=True)
-        fields = ['user_id', 'action']
+        fields = 'id', ['user_id', 'action']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
@@ -17,7 +17,8 @@ class UserLogSerializer(serializers.ModelSerializer):
 class CardLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = CardsLogs
-        fields = ['card', 'user_id', 'device', 'uuid', 'action', 'device_ip']
+        fields = ['id', 'card', 'user_id',
+                  'device', 'uuid', 'action', 'device_ip']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
