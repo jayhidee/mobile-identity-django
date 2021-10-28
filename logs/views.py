@@ -25,7 +25,7 @@ class CardLogs(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-    def get(self, request):
-        log = CardsLogs.objects.filter(card=request.user)
+    def get(self, request, id):
+        log = CardsLogs.objects.filter(card=id)
         serializer = CardLogSerializer(log, many=True)
         return Response(serializer.data)
