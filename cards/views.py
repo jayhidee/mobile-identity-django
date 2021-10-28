@@ -22,6 +22,7 @@ class Cardz(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
+        # return Response(request.data)
         cardsss = Cards(user_id=request.user, verified=False)
         serializer = CardSerializer(cardsss, data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -48,6 +49,7 @@ class CardzD(APIView):
 
     def patch(self, request, id, *args, **kwargs):
         data = request.data
+
         qs = Cards.objects.get(id=id)
         serializer = CardSerializer(instance=qs, data=data)
         serializer.is_valid(raise_exception=True)
@@ -55,7 +57,7 @@ class CardzD(APIView):
         # user action Log
         UserAction.objects.create(
             user_id=request.user, action="User edited his card (" + request.data['card_id'] + ")")
-        return Response(serializer.data)
+        return Response({"message": "Card has been edited please verify card again"})
 
     def put(self, request, id, *args, **kwargs):
         # Run some API verification
