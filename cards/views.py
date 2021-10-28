@@ -11,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from .serializers import CardSerializer
 from .models import Cards
 from logs.internal import UserAction
+from otp_tokens.views import CardToken
+from otp_tokens.models import CardToken
 import jwt
 import datetime
 
@@ -28,7 +30,8 @@ class Cardz(APIView):
         # user action Log
         UserAction.objects.create(
             user_id=request.user, action="User created a new card (" + request.data['card_id'] + ")")
-        return Response(serializer.data)
+
+        return Response({"message": "Your card has been added please do verify card"})
 
     def get(self, request):
         org = Cards.objects.filter(user_id=request.user)
@@ -60,3 +63,35 @@ class CardzD(APIView):
 
     def post(self, id):
         pass
+
+
+class CardzView(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, id, *args, **kwargs):
+        qs = Cards.objects.filter(card_id=id)
+        if qs:
+            newCardToken = {
+                "card_id": id,
+                "card_owner": request.user,
+                "otp": ""
+            }
+            UserAction.objects.create(
+                user_id=request.user, action="User viewed his card with ID("+id+")")
+            return CardToken(newCardToken)
+        else:
+            return Response({"message": "Card with ID not found"})
+
+
+class CardValidate(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        token_validity = CardToken.object.filter(
+            card_id=request.data['card_id'],  valid=True)
+        if token_validity['date_expiring'] > datetime.datetime.now():
+            return True
+        else:
+            return Response({"message": "Token is Invalid"})

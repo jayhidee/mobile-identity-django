@@ -37,6 +37,15 @@ def UseAct(request):
     # return Response(serializer.data)
 
 
+def CardToken(request):
+    oyp = OTP()
+    request['otp'] = oyp
+    serializer = CardTokenSerializer(data=request)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data)
+
+
 def OTP():
     # Declare a digits variable
     # which stores all digits
@@ -51,23 +60,23 @@ def OTP():
     return OTP
 
 
-class UserAct(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated,)
+def cardVerify(request):
+    oyp = OTP()
+    request['otp'] = oyp
+    serializer = UserAvtivationSerializer(data=request)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
 
-    def post(self, request):
-        serializer = UserAvtivationSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        # user action Log
-        UserAction.objects.create(
-            user_id=request.user, action="User Created Organization (" + request.data['name'] + ")")
-        return Response(serializer.data)
+    # Mail
+    mail_html = render_to_string(
+        "token_mail.html", {'url': 'https://nameless-retreat-73704.herokuapp.com/api/one-time-pass/account-activation/', 'emailz': request['email'], 'namez': request['name'], 'token': oyp})
+    text = strip_tags(mail_html)
+    mailer = {
+        'subject': 'User Activation Token',
+        'message': mail_html,
+        'email': request['email']
+    }
 
-    def get(self, request):
-        org = IssuingOrginization.objects.all()
-        serializer = OrgSerializer(org, many=True)
-        # user action Log
-        UserAction.objects.create(
-            user_id=request.user, action="User viewed the list of organization")
-        return Response(serializer.data)
+    # SMS
+
+    return ToksMail(mailer)
