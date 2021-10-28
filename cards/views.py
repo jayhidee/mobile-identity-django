@@ -63,8 +63,10 @@ class CardzD(APIView):
         # Run some API verification
         Cards.objects.filter(id=id).update(Verified=True)
 
-    def post(self, id):
-        pass
+    def get(self, id):
+        qs = Cards.objects.filter(id=id)
+        serializer = CardSerializer(qs, many=True)
+        return Response(serializer.data)
 
 
 class CardzView(APIView):
