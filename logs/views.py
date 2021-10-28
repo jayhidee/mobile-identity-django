@@ -1,3 +1,31 @@
-from django.shortcuts import render
+from django.core.checks import messages
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework import authentication, permissions, serializers
+from rest_framework.authtoken.models import Token
 
-# Create your views here.
+
+from .serializers import CardLogSerializer
+from .models import CardsLogs
+import jwt
+import datetime
+
+
+class CardLogs(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        # return Response(request.data)
+        cardsss = CardsLogs(user_id=request.user, verified=False)
+        serializer = CardLogSerializer(cardsss, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+    def get(self, request):
+        log = CardsLogs.objects.filter(card=request.user)
+        serializer = CardLogSerializer(log, many=True)
+        return Response(serializer.data)
