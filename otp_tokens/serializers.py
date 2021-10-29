@@ -16,7 +16,7 @@ class CardTokenSerializer(serializers.ModelSerializer):
 class CardVerifySerializer(serializers.ModelSerializer):
     class Meta:
         model = CardVerify
-        fields = ['card_id', 'otp', 'card_owner']
+        fields = ['card_id', 'otp']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)

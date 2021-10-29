@@ -11,8 +11,9 @@ from rest_framework.authtoken.models import Token
 from .serializers import CardSerializer
 from .models import Cards
 from logs.internal import UserAction
-from otp_tokens.views import CardToken
+from otp_tokens.views import CardToken, OTP
 from otp_tokens.models import CardToken
+from otp_tokens.serializers import CardTokenSerializer
 import jwt
 import datetime
 
@@ -69,21 +70,28 @@ class CardzD(APIView):
         return Response(serializer.data)
 
 
+# Get token
+
 class CardzView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get(self, request, id, *args, **kwargs):
-        qs = Cards.objects.filter(card_id=id)
+    def get(self, request, id, card_id, *args, **kwargs):
+        qs = Cards.objects.filter(card_id=card_id)
         if qs:
+            UserAction.objects.create(
+                user_id=request.user, action="User viewed his card with ID("+card_id + ")")
+
+            cardsss = CardToken(card_owner=request.user)
             newCardToken = {
                 "card_id": id,
-                "card_owner": request.user,
-                "otp": ""
+                "otp": OTP(),
+                "card_owner": request.user.id
             }
-            UserAction.objects.create(
-                user_id=request.user, action="User viewed his card with ID("+id+")")
-            return CardToken(newCardToken)
+            serializer = CardTokenSerializer(data=newCardToken)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
         else:
             return Response({"message": "Card with ID not found"})
 

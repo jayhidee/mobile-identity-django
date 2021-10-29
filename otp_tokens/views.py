@@ -43,7 +43,7 @@ def CardToken(request):
     serializer = CardTokenSerializer(data=request)
     serializer.is_valid(raise_exception=True)
     serializer.save()
-    return Response(serializer.data)
+    return serializer
 
 
 def OTP():
