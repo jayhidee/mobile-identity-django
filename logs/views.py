@@ -43,5 +43,5 @@ class CardLogsPost(APIView):
 
     def get(self, request):
         log = Act.objects.filter(user_id=request.user)
-        serializer = CardLogSerializer(log, many=True)
+        serializer = UserLogSerializer(log, many=True)
         return Response(serializer.data)
