@@ -21,13 +21,13 @@ class RegisterView(APIView):
 
         res = {
             'otp': '',
-            'user': 1,
+            'user': serializer.data['id'],
             'email': request.data['email'],
             'name': request.data['first_name'] + " " + request.data['last_name']
         }
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User create a new account")
+            user_id=serializer.data['id'], action="User create a new account")
 
         if UseAct(res) == True:
             return Response({'message': 'Thanks for regestring. Please check your mail to activate your account.'})
@@ -73,7 +73,7 @@ class LoginView(APIView):
         }
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User logged in")
+            user_id=user.id, action="User logged in")
 
         return response
 
