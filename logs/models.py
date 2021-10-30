@@ -23,9 +23,10 @@ class CardsLogs(models.Model):
     time_stamp = models.DateTimeField(auto_now_add=True)
     user_id = models.ForeignKey(User, on_delete=models.PROTECT)
     device = models.CharField(max_length=100)
-    uuid = models.UUIDField(editable=False)
+    uuid = models.UUIDField(editable=False, null=True)
     action = models.TextField(max_length=255)
-    device_ip = models.GenericIPAddressField()
+    device_ip = models.GenericIPAddressField(null=True)
+    device_os = models.CharField(max_length=100)
 
     class Meta:
         ordering = ['time_stamp']

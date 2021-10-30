@@ -18,14 +18,19 @@ class CardLogs(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
+    def get(self, request, id):
+        log = CardsLogs.objects.filter(card=id)
+        serializer = CardLogSerializer(log, many=True)
+        return Response(serializer.data)
+
+
+class CardLogsPost(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
     def post(self, request):
         # return Response(request.data)
         cardsss = CardsLogs(user_id=request.user, verified=False)
         serializer = CardLogSerializer(cardsss, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
-    def get(self, request, id):
-        log = CardsLogs.objects.filter(card=id)
-        serializer = CardLogSerializer(log, many=True)
-        return Response(serializer.data)
