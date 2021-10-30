@@ -40,9 +40,8 @@ class CardLogsPost(APIView):
         UserAction.objects.create(
             user_id=request.user, action="User generated new token for his card")
         return Response({"message": "Token generated"})
-        
-        
-     def get(self, request):
+
+    def get(self, request):
         log = Act.objects.filter(card=id)
         serializer = CardLogSerializer(log, many=True)
         return Response(serializer.data)
