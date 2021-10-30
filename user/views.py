@@ -48,19 +48,10 @@ class LoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect email or password!')
 
-        # payload = {
-        #     'id': user.id,
-        #     'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-        #     'iat': datetime.datetime.utcnow()
-        # }
-
-        # token = jwt.encode(payload, 'secret',
-        #                    algorithm='HS256').decode('utf-8')
-
         token = Token.objects.create(user=user)
 
         response = Response()
-
+        # if 
         response.set_cookie(key='jwt', value=token, httponly=True)
         response.data = {
             'token': token.key,

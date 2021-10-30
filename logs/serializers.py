@@ -6,7 +6,7 @@ class UserLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAction
         # user_id = serializers.RelatedField(source='user', read_only=True)
-        fields = 'id', ['user_id', 'action']
+        fields = ['user_id', 'action']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
