@@ -30,7 +30,8 @@ class CardLogsPost(APIView):
 
     def post(self, request):
         # return Response(request.data)
-        cardsss = CardsLogs(user_id=request.user)
-        serializer = CardLogSerializer(cardsss, data=request.data)
+        # cardsss = CardsLogs(user_id=request.user)
+        request.data['user_id'] = request.user.id
+        serializer = CardLogSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
