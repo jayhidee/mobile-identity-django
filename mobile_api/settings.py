@@ -72,6 +72,8 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8100",
     "http://127.0.0.1:8100",
+    "http://localhost:8101",
+    "http://127.0.0.1:8101",
     "http://localhost"
 ]
 # CORS_ALLOWED_ORIGIN_REGEXES = [
