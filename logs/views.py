@@ -35,3 +35,4 @@ class CardLogsPost(APIView):
         serializer = CardLogSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        return ({"message": "Token generated"})
