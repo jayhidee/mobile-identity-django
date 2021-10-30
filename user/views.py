@@ -9,6 +9,7 @@ from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer
 from .models import User
 from otp_tokens.views import UseAct
+from logs.internal import UserAction
 
 
 # Create your views here.
@@ -24,6 +25,10 @@ class RegisterView(APIView):
             'email': request.data['email'],
             'name': request.data['first_name'] + " " + request.data['last_name']
         }
+        # user action Log
+        UserAction.objects.create(
+            user_id=request.user, action="User create a new account")
+
         if UseAct(res) == True:
             return Response({'message': 'Thanks for regestring. Please check your mail to activate your account.'})
         else:
@@ -66,17 +71,21 @@ class LoginView(APIView):
                 'email': user.email
             }
         }
+        # user action Log
+        UserAction.objects.create(
+            user_id=request.user, action="User logged in")
+
         return response
 
 
 class LogoutView(APIView):
 
     @permission_classes([IsAuthenticated])
-    def post(self, request):
-        response = Response()
-        # response.delete_cookie('jwt')
-        Token.delete(user=request.user)
-        response.data = {
-            'message': 'success'
-        }
-        return response
+    def get(self, request):
+        # user action Log
+        UserAction.objects.create(
+            user_id=request.user, action="User logged out")
+
+        request.user.auth_token.delete()
+        # logout(request)
+        return Response({"message": "Thanks. Hope to see you again"})

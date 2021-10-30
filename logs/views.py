@@ -10,6 +10,7 @@ from rest_framework.authtoken.models import Token
 
 from .serializers import CardLogSerializer
 from .models import CardsLogs
+from logs.internal import UserAction
 import jwt
 import datetime
 
@@ -35,4 +36,7 @@ class CardLogsPost(APIView):
         serializer = CardLogSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return ({"message": "Token generated"})
+        # user action Log
+        UserAction.objects.create(
+            user_id=request.user, action="User generated new token for his card")
+        return Response({"message": "Token generated"})
