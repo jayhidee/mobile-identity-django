@@ -17,7 +17,7 @@ class UserLogSerializer(serializers.ModelSerializer):
 class CardLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = CardsLogs
-        fields = ['id', 'card', 'user_id',
+        fields = ['id', 'card', 'user_id', 'time_stamp',
                   'device', 'uuid', 'action', 'device_ip']
 
     def create(self, validated_data):
