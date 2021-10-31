@@ -102,7 +102,7 @@ class CardValidate(APIView):
 
     def post(self, request):
         token_validity = CardToken.objects.filter(
-            card_id=request.data['card_id'],  valid=True)
+            card_id=request.data['card_id'],  valied=True)
         if token_validity['date_expiring'] > datetime.datetime.now():
             card_det = Cards.objects.filter(card_id=request.data['card_id']).select_related(
                 'IssuingOrginization').values_list('card_id', 'IssuingOrginization__name')
