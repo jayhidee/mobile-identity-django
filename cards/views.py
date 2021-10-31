@@ -101,9 +101,19 @@ class CardValidate(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        token_validity = CardToken.object.filter(
+        token_validity = CardToken.objects.filter(
             card_id=request.data['card_id'],  valid=True)
         if token_validity['date_expiring'] > datetime.datetime.now():
-            return True
+            card_det = Cards.objects.filter(card_id=request.data['card_id']).select_related(
+                'IssuingOrginization').values_list('card_id', 'IssuingOrginization__name')
+            data = {
+                "first_name": request.user.first_name,
+                "last_name": request.user.last_name,
+                "issuing_org": card_det.IssuingOrginization__name,
+                "success": request.user.last_name,
+                "card_id": request.card_det.card_id,
+
+            }
+            return Response(data)
         else:
             return Response({"success": True, "message": "Token is Invalid"})
