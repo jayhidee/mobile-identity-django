@@ -48,25 +48,47 @@ class LoginView(APIView):
         if not user.check_password(password):
             raise AuthenticationFailed('Incorrect email or password!')
 
-        token = Token.objects.create(user=user)
+        # Token Check
+        if Token.objects.get(user=user).key:
+            token = Token.objects.get(user=user)
 
-        response = Response()
-        # if 
-        response.set_cookie(key='jwt', value=token, httponly=True)
-        response.data = {
-            'token': token.key,
-            'success': 'ture',
-            'user': {
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email
+            response = Response()
+            # if
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {
+                'token': token.key,
+                'success': 'ture',
+                'user': {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                }
             }
-        }
-        # user action Log
-        # UserAction.objects.create(
-        #     user_id=user.id, action="User logged in")
+            # user action Log
+            # UserAction.objects.create(
+            #     user_id=user.id, action="User logged in")
 
-        return response
+            return response
+        else:
+            token = Token.objects.create(user=user)
+
+            response = Response()
+            # if
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {
+                'token': token.key,
+                'success': 'ture',
+                'user': {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                }
+            }
+            # user action Log
+            # UserAction.objects.create(
+            #     user_id=user.id, action="User logged in")
+
+            return response
 
 
 class LogoutView(APIView):
