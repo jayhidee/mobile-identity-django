@@ -15,7 +15,9 @@ from otp_tokens.views import CardToken, OTP
 from otp_tokens.models import CardToken
 from otp_tokens.serializers import CardTokenSerializer
 import jwt
+import json
 import datetime
+from django.http import JsonResponse
 
 
 class Cardz(APIView):
@@ -102,18 +104,18 @@ class CardValidate(APIView):
 
     def post(self, request):
         token_validity = CardToken.objects.filter(
-            card_id=request.data['card_id'],  valied=True)
-        if token_validity['date_expiring'] > datetime.datetime.now():
+            card_id=request.data['card_id'],  valied=True, date_expiring__gte=datetime.datetime.now())
+        if token_validity:
             card_det = Cards.objects.filter(card_id=request.data['card_id']).select_related(
-                'IssuingOrginization').values_list('card_id', 'IssuingOrginization__name')
-            data = {
-                "first_name": request.user.first_name,
-                "last_name": request.user.last_name,
-                "issuing_org": card_det.IssuingOrginization__name,
-                "success": request.user.last_name,
-                "card_id": request.card_det.card_id,
+                'IssuingOrginization')  # .values_list('card_id', 'issuing_orginization__name')
+            # data = {
+            #     "first_name": request.user.first_name,
+            #     "last_name": request.user.last_name,
+            #     "issuing_org": card_det.name,
+            #     "success": True,
+            #     "card_id": card_det.card_id,
 
-            }
-            return Response(data)
+            # }
+            return Response(card_det)
         else:
-            return Response({"success": True, "message": "Token is Invalid"})
+            return Response({"success": True, "message": "Token is Invalid", "token": token_validity})

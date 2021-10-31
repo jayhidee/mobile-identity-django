@@ -16,7 +16,7 @@ class CardToken(models.Model):
     valied = models.BooleanField(default=True)
     date_issued = models.DateTimeField(auto_now_add=True)
     date_expiring = models.DateTimeField(
-        default=datetime.now()+timedelta(minutes=6))
+        default=datetime.now()+timedelta(minutes=60))
 
     class Meta:
         ordering = ['date_used']
