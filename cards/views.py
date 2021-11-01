@@ -110,11 +110,11 @@ class CardValidate(APIView):
         if token_validity:
             card_det = Cards.objects.filter(
                 id=request.data['card_id']).select_related('issuing_organization').values_list('card_id', 'issuing_organization__name')
+            user_det = Cards.objects.filter(
+                id=request.data['card_id']).select_related('user_id').values_list('user_id__first_name', 'user_id__last_name')
             if card_det:
                 data = {
-                    "first_name": request.user.first_name,
-                    "last_name": request.user.last_name,
-                    # "issuing_org": org,
+                    "name": user_det,
                     "success": True,
                     "card_id": card_det,
                 }
