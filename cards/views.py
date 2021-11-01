@@ -118,7 +118,7 @@ class CardValidate(APIView):
                     "success": True,
                     "card_id": card_det,
                 }
-                Cards.objects.update(
+                CardToken.objects.update(
                     valied=False, date_used=datetime.datetime.now(), officer=request.user.id)
                 return Response(data)
             else:
