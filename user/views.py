@@ -26,8 +26,8 @@ class RegisterView(APIView):
             'name': request.data['first_name'] + " " + request.data['last_name']
         }
         # user action Log
-        # UserAction.objects.create(
-        #     user_id=serializer.data['id'], action="User create a new account")
+        UserAction.objects.create(
+            user_id=serializer.data, action="User create a new account")
 
         if UseAct(res) == True:
             return Response({'message': 'Thanks for regestring. Please check your mail to activate your account.'})
@@ -49,7 +49,7 @@ class LoginView(APIView):
             raise AuthenticationFailed('Incorrect email or password!')
 
         # Token Check
-        if Token.objects.get(user=user).key:
+        if Token.objects.filter(user=user):
             token = Token.objects.get(user=user)
 
             response = Response()
@@ -65,8 +65,8 @@ class LoginView(APIView):
                 }
             }
             # user action Log
-            # UserAction.objects.create(
-            #     user_id=user.id, action="User logged in")
+            UserAction.objects.create(
+                user_id=user, action="User logged in")
 
             return response
         else:
@@ -85,8 +85,8 @@ class LoginView(APIView):
                 }
             }
             # user action Log
-            # UserAction.objects.create(
-            #     user_id=user.id, action="User logged in")
+            UserAction.objects.create(
+                user_id=user, action="User logged in")
 
             return response
 
