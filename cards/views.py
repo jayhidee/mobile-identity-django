@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import authentication, permissions, serializers
 from rest_framework.authtoken.models import Token
 
+from organization.models import IssuingOrginization
+
 
 from .serializers import CardSerializer
 from .models import Cards
@@ -106,16 +108,20 @@ class CardValidate(APIView):
         token_validity = CardToken.objects.filter(
             card_id=request.data['card_id'],  valied=True, date_expiring__gte=datetime.datetime.now())
         if token_validity:
-            card_det = Cards.objects.filter(card_id=request.data['card_id']).select_related(
-                'IssuingOrginization')  # .values_list('card_id', 'issuing_orginization__name')
-            # data = {
-            #     "first_name": request.user.first_name,
-            #     "last_name": request.user.last_name,
-            #     "issuing_org": card_det.name,
-            #     "success": True,
-            #     "card_id": card_det.card_id,
-
-            # }
-            return Response(card_det)
+            card_det = Cards.objects.filter(
+                id=request.data['card_id']).select_related('issuing_organization').values_list('card_id', 'issuing_organization__name')
+            if card_det:
+                data = {
+                    "first_name": request.user.first_name,
+                    "last_name": request.user.last_name,
+                    # "issuing_org": org,
+                    "success": True,
+                    "card_id": card_det,
+                }
+                Cards.objects.update(
+                    valied=False, date_used=datetime.datetime.now(), officer=request.user.id)
+                return Response(data)
+            else:
+                return Response({"success": False, "message": "Invalid Card ID"})
         else:
-            return Response({"success": True, "message": "Token is Invalid", "token": token_validity})
+            return Response({"success": False, "message": "Token is Invalid"})
