@@ -20,6 +20,20 @@ def error_404(request, exception):
     return response
 
 
+def error_403(request, exception):
+    message = ("Error occured, we will look into it.")
+    response = JsonResponse(
+        data={"message": message, "status": False})
+    response.status_code = 403
+    error = {
+        "code": response.status_code,
+        "error_type": request.get_full_path(),
+        "error_details": json.dumps(traceback.format_exc()) + " - URL" + request.get_full_path()
+    }
+    errorHandeling(error)
+    return response
+
+
 def error_500(request):
     message = ("Error occured, we will look into it.")
     response = JsonResponse(data={"message": message, "status": False})
