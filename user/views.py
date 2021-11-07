@@ -99,6 +99,6 @@ class LogoutView(APIView):
         UserAction.objects.create(
             user_id=request.user, action="User logged out")
 
-        request.user.auth_token.delete()
+        # request.user.auth_token.delete()
         # logout(request)
         return Response({"message": "Thanks. Hope to see you again"})

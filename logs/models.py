@@ -14,7 +14,7 @@ class UserAction(models.Model):
         ordering = ['time_stamp']
 
     def __str__(self):
-        return self.card_id
+        return self.action
 
 
 # Create your models here.
@@ -32,7 +32,7 @@ class CardsLogs(models.Model):
         ordering = ['time_stamp']
 
     def __str__(self):
-        return self.card
+        return self.action
 
 
 class ErrorLogging(models.Model):
