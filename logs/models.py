@@ -33,3 +33,16 @@ class CardsLogs(models.Model):
 
     def __str__(self):
         return self.card
+
+
+class ErrorLogging(models.Model):
+    code = models.CharField(max_length=255)
+    error_type = models.CharField(max_length=255)
+    error_details = models.TextField()
+    time_field = models.TimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['time_field']
+
+    def __str__(self):
+        return self.code

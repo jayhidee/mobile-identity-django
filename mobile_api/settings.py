@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-q82z*en_711so^q=bbxyh0h!x++n$l55qyu-(!*$y!b7h6f0zh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['nameless-retreat-73704.herokuapp.com',
                  'localhost', '127.0.0.1']
@@ -129,7 +129,8 @@ REST_FRAMEWORK = {
     # ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'EXCEPTION_HANDLER': 'utils.custom_exception_handler.custom_exception_handler'
 }
 
 

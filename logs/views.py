@@ -1,14 +1,13 @@
 from django.core.checks import messages
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import authentication, permissions, serializers
 from rest_framework.authtoken.models import Token
 
 
-from .serializers import CardLogSerializer, UserLogSerializer
+from .serializers import CardLogSerializer, UserLogSerializer, ErrorLogSerializer
 from .models import CardsLogs, UserAction as Act
 from logs.internal import UserAction
 import jwt
@@ -45,3 +44,10 @@ class CardLogsPost(APIView):
         log = Act.objects.filter(user_id=request.user)
         serializer = UserLogSerializer(log, many=True)
         return Response(serializer.data)
+
+
+def errorHandeling(logs):
+    serializer = ErrorLogSerializer(data=logs)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return True

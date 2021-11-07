@@ -24,3 +24,7 @@ urlpatterns = [
     path('api/cards/', include('cards.urls')),
     path('api/logs/', include('logs.urls')),
 ]
+
+handler404 = 'utils.views.error_404'
+handler500 = 'utils.views.error_500'
+handler503 = 'utils.views.error_503'
