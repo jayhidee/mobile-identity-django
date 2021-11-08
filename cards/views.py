@@ -16,10 +16,7 @@ from logs.internal import UserAction
 from otp_tokens.views import CardToken, OTP, otp_card
 from otp_tokens.models import CardToken
 from otp_tokens.serializers import CardTokenSerializer
-import jwt
-import json
 import datetime
-from django.http import JsonResponse
 
 
 class Cardz(APIView):
@@ -133,33 +130,37 @@ class CardOTP(APIView):
 
     def post(self, request):
         card_idz = otp_card()
-        crd = Cards.objects.filter(card_id=card_idz)
+        crd = CardsOTP.objects.filter(card_id=card_idz)
         if crd:
             card_idzz = otp_card()
-            cardsss = Cards(card_id=card_idzz,
-                            requested_by=request.user, approved=False)
-            serializer = CardSerializer(cardsss, data=request.data)
+            request.data['card_id'] = card_idzz
+            request.data['approved'] = False
+            cardsss = CardsOTP(requested_by=request.user)
+            serializer = CardOTPSerializer(cardsss, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             # user action Log
             UserAction.objects.create(
                 user_id=request.user, action="User requested a new access (" + card_idzz + ")")
+            return Response({"message": "Your request has been received please wait for aproval."})
 
         else:
-            card_idzz = otp_card()
-            cardsss = Cards(card_id=card_idz,
-                            requested_by=request.user, approved=False)
-            serializer = CardSerializer(cardsss, data=request.data)
+            request.data['card_id'] = card_idz
+            request.data['approved'] = False
+            cardsss = CardsOTP(requested_by=request.user)
+            serializer = CardOTPSerializer(cardsss, data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             # user action Log
             UserAction.objects.create(
                 user_id=request.user, action="User requested a new access (" + card_idz + ")")
+            return Response({"success": True, "message": "Your request has been received please wait for aproval."})
 
-    def get(request, Self):
-        crd = Cards.objects.filter(requested_by=request.user)
+    def get(self, request):
+        uz = request.user
+        crd = CardsOTP.objects.filter(requested_by=uz)
         serializer = CardOTPSerializer(crd, many=True)
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User viewed list of his card")
+            user_id=request.user, action="User viewed list of his one time access")
         return Response(serializer.data)

@@ -32,7 +32,7 @@ class CardsOTP(models.Model):
     to_date = models.DateField()
     email = models.EmailField()
     phone_number = models.CharField(max_length=11)
-    date_approved = models.DateField()
+    date_approved = models.DateField(null=True)
     approved = models.BooleanField()
     approved_by = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="approved_by", null=True)
@@ -41,7 +41,7 @@ class CardsOTP(models.Model):
         User, on_delete=models.PROTECT, related_name="requested_by")
 
     class Meta:
-        ordering = ['date_approved']
+        ordering = ['from_date']
 
     def __str__(self):
         return self.card_id

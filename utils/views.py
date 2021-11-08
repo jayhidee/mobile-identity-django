@@ -14,7 +14,7 @@ def error_404(request, exception):
     error = {
         "code": response.status_code,
         "error_type": request.get_full_path(),
-        "error_details": json.dumps(traceback.format_exc()) + " - URL" + request.get_full_path()
+        "error_details": json.dumps(traceback.format_exc())
     }
     errorHandeling(error)
     return response
@@ -28,7 +28,7 @@ def error_403(request, exception):
     error = {
         "code": response.status_code,
         "error_type": request.get_full_path(),
-        "error_details": json.dumps(traceback.format_exc()) + " - URL" + request.get_full_path()
+        "error_details": json.dumps(traceback.format_exc())
     }
     errorHandeling(error)
     return response

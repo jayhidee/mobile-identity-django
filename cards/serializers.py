@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cards
+from .models import Cards, CardsOTP
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -38,11 +38,7 @@ class CardSerializer(serializers.ModelSerializer):
 
 class CardOTPSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cards
-        card_id = serializers.CharField(min_length=10)
-        # verified = False
-        # issuing_organization = serializers.CharField(read_only=True,
-        #                                              source='IssuingOrginizationOTP.id')
+        model = CardsOTP
         fields = ['id', 'card_id', 'type', 'issuing_organization', 'first_name', 'last_name',
                   'to_date', 'from_date', 'email', 'phone_number', 'date_approved', 'approved', 'reason_for_visit']
 
