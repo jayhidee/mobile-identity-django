@@ -60,6 +60,20 @@ def OTP():
     return OTP
 
 
+def otp_card():
+    # Declare a digits variable
+    # which stores all digits
+    digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    OTP = ""
+
+   # length of password can be changed
+   # by changing value in range
+    for i in range(6):
+        OTP += digits[math.floor(random.random() * 10)]
+
+    return OTP
+
+
 def cardVerify(request):
     oyp = OTP()
     request['otp'] = oyp

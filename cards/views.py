@@ -10,10 +10,10 @@ from rest_framework.authtoken.models import Token
 from organization.models import IssuingOrginization
 
 
-from .serializers import CardSerializer
-from .models import Cards
+from .serializers import CardSerializer, CardOTPSerializer
+from .models import Cards, CardsOTP
 from logs.internal import UserAction
-from otp_tokens.views import CardToken, OTP
+from otp_tokens.views import CardToken, OTP, otp_card
 from otp_tokens.models import CardToken
 from otp_tokens.serializers import CardTokenSerializer
 import jwt
@@ -125,3 +125,41 @@ class CardValidate(APIView):
                 return Response({"success": False, "message": "Invalid Card ID"})
         else:
             return Response({"success": False, "message": "Token is Invalid"})
+
+
+class CardOTP(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        card_idz = otp_card()
+        crd = Cards.objects.filter(card_id=card_idz)
+        if crd:
+            card_idzz = otp_card()
+            cardsss = Cards(card_id=card_idzz,
+                            requested_by=request.user, approved=False)
+            serializer = CardSerializer(cardsss, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            # user action Log
+            UserAction.objects.create(
+                user_id=request.user, action="User requested a new access (" + card_idzz + ")")
+
+        else:
+            card_idzz = otp_card()
+            cardsss = Cards(card_id=card_idz,
+                            requested_by=request.user, approved=False)
+            serializer = CardSerializer(cardsss, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            # user action Log
+            UserAction.objects.create(
+                user_id=request.user, action="User requested a new access (" + card_idz + ")")
+
+    def get(request, Self):
+        crd = Cards.objects.filter(requested_by=request.user)
+        serializer = CardOTPSerializer(crd, many=True)
+        # user action Log
+        UserAction.objects.create(
+            user_id=request.user, action="User viewed list of his card")
+        return Response(serializer.data)

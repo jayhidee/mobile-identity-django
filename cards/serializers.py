@@ -34,3 +34,19 @@ class CardSerializer(serializers.ModelSerializer):
     #         'date_issued', instance.date_issued)
     #     instance.save()
     #     return instance
+
+
+class CardOTPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cards
+        card_id = serializers.CharField(min_length=10)
+        # verified = False
+        # issuing_organization = serializers.CharField(read_only=True,
+        #                                              source='IssuingOrginizationOTP.id')
+        fields = ['id', 'card_id', 'type', 'issuing_organization', 'first_name', 'last_name',
+                  'to_date', 'from_date', 'email', 'phone_number', 'date_approved', 'approved', 'reason_for_visit']
+
+    def create(self, validated_data):
+        instance = self.Meta.model(**validated_data)
+        instance.save()
+        return instance
