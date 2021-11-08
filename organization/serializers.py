@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import IssuingOrginization
+from .models import IssuingOrginization, IssuingOrginizationOTP
 
 
 class OrgSerializer(serializers.ModelSerializer):
@@ -19,5 +19,16 @@ class OrgSerializer(serializers.ModelSerializer):
         instance.phone_number = validated_data.get(
             'phone_number', instance.phone_number)
         instance.address = validated_data.get('address', instance.address)
+        instance.save()
+        return instance
+
+
+class OrgSerializerO(serializers.ModelSerializer):
+    class Meta:
+        model = IssuingOrginizationOTP
+        fields = ['id', 'name', 'api', 'email', 'phone_number', 'address']
+
+    def create(self, validated_data):
+        instance = self.Meta.model(**validated_data)
         instance.save()
         return instance
