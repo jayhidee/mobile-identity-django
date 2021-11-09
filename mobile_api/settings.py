@@ -212,6 +212,6 @@ AUTH_USER_MODEL = 'user.User'
 EMAIL_HOST = 'mail.codedtee.com'
 EMAIL_PORT = '465'
 EMAIL_HOST_USER = 'test@codedtee.com'
-EMAIL_HOST_PASSWORD = 'Password@123!23'
+EMAIL_HOST_PASSWORD = 'Xe3##9O*vOPy'
 # EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
