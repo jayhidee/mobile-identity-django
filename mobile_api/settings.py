@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 import os
+import cx_Oracle
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -155,15 +156,16 @@ DATABASES = {
     #     'HOST': 'ec2-34-202-88-122.compute-1.amazonaws.com',
     #     'PORT': '5432',
     # },
-    'default': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'orcl',
-        'USER': 'GIM1',
-        'PASSWORD': 'GIM1',
-        'HOST': 'dbcruiser-rds2.ccubvhabjedo.eu-west-2.rds.amazonaws.com',
-        # 'NAME': 'dbcruiser-rds2.ccubvhabjedo.eu-west-2.rds.amazonaws.com:1521/GIM1',
-        'PORT': '1521',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.oracle',
+    #     'NAME': 'orcl',
+    #     'USER': 'GIM1',
+    #     'PASSWORD': 'GIM1',
+    #     'HOST': 'dbcruiser-rds2.ccubvhabjedo.eu-west-2.rds.amazonaws.com',
+    #     # 'NAME': 'dbcruiser-rds2.ccubvhabjedo.eu-west-2.rds.amazonaws.com:1521/GIM1',
+    #     'PORT': '1521',
+    # },
+    'default': cx_Oracle.connect('GIM1', 'GIM1', 'dbcruiser-rds2.ccubvhabjedo.eu-west-2.rds.amazonaws.com')
 
 }
 
