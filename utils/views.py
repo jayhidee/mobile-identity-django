@@ -58,3 +58,16 @@ def error_503(request, exception):
     }
     errorHandeling(error)
     return response
+
+
+def error_400(request, exception):
+    message = ("Error occured, we will look into it.")
+    response = JsonResponse(data={"message": message, "status": False})
+    response.status_code = 400
+    error = {
+        "code": response.status_code,
+        "error_type": request.get_full_path(),
+        "error_details": json.dumps(traceback.format_exc())
+    }
+    errorHandeling(error)
+    return response

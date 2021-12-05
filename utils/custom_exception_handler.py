@@ -15,7 +15,7 @@ def custom_exception_handler(exc, context):
         response.data['status_code'] = response.status_code
         error = {
             "code": response.status_code,
-            "error_type": exc.detail,
+            "error_type": "other error codes",
             "error_details": json.dumps(traceback.format_exc())
         }
         errorHandeling(error)

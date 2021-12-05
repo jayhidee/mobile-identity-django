@@ -26,8 +26,8 @@ class RegisterView(APIView):
             'name': request.data['first_name'] + " " + request.data['last_name']
         }
         # user action Log
-        UserAction.objects.create(
-            user_id=serializer.data, action="User create a new account")
+        # UserAction.objects.create(
+        #     user_id=serializer.data['id'], action="User create a new account")
 
         if UseAct(res) == True:
             return Response({'message': 'Thanks for regestring. Please check your mail to activate your account.'})
