@@ -5,7 +5,8 @@ from .models import IssuingOrginization, IssuingOrginizationOTP
 class OrgSerializer(serializers.ModelSerializer):
     class Meta:
         model = IssuingOrginization
-        fields = ['id', 'name', 'api', 'email', 'phone_number', 'address']
+        fields = ['id', 'name', 'api', 'email',
+                  'phone_number', 'address', 'images']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)
@@ -26,7 +27,8 @@ class OrgSerializer(serializers.ModelSerializer):
 class OrgSerializerO(serializers.ModelSerializer):
     class Meta:
         model = IssuingOrginizationOTP
-        fields = ['id', 'name', 'api', 'email', 'phone_number', 'address']
+        fields = ['id', 'name', 'api', 'email',
+                  'phone_number', 'address', 'images']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)

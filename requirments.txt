@@ -1,6 +1,11 @@
-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
+cloudinary.config( 
+  cloud_name = "gims", 
+  api_key = "446984229522225", 
+  api_secret = "3e2qDt6wQtGc2ZXoiplQOfSk-gI" 
+)
 
 
+pip install cloudinary
 
-
-pip install django-heroku
+cloudinary.uploader.upload("https://upload.wikimedia.org/wikipedia/commons/a/ae/Olympic_flag.jpg", 
+  public_id = "olympic_flag")

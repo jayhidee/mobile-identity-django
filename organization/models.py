@@ -9,6 +9,7 @@ class IssuingOrginization(models.Model):
     phone_number = models.CharField(max_length=11)
     email = models.CharField(max_length=255)
     address = models.TextField(max_length=255)
+    images = models.URLField(null=True, default='https://test.com')
 
     class Meta:
         ordering = ['name']
@@ -23,6 +24,7 @@ class IssuingOrginizationOTP(models.Model):
     phone_number = models.CharField(max_length=11)
     email = models.CharField(max_length=255)
     address = models.TextField(max_length=255)
+    images = models.URLField(null=True, default='https://test.com')
 
     class Meta:
         ordering = ['name']
