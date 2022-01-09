@@ -245,7 +245,7 @@ class DownloadCard(APIView):
         # card = renderer_classes("download_card.html", {
         #                         'name': name, 'age': age, 'sex': sex, 'address': address, 'card_id': d[0]['card_id']})
         config = imgkit.config(
-            wkhtmltoimage='/templates/card_id', xvfb='/opt/bin/xvfb-run')
+            wkhtmltoimage='templates/apps/wkhtmltox_0.12.6-1.focal_amd64.deb', xvfb='/opt/bin/xvfb-run')
         imgkit.from_string(image, d[0]['card_id']+'-'+'.jpg', config=config)
 
         return Response({'messages': list(cardz)})
