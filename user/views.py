@@ -6,6 +6,9 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 
 
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+
 from .serializers import UserSerializer
 from .models import User
 from otp_tokens.views import UseAct
@@ -102,3 +105,12 @@ class LogoutView(APIView):
         # request.user.auth_token.delete()
         # logout(request)
         return Response({"message": "Thanks. Hope to see you again"})
+
+
+class CreateGroups(APIView):
+    def get(self, request):
+        Group.objects.get_or_create(name="Officers")
+        Group.objects.get_or_create(name="Admin")
+        Group.objects.get_or_create(name="Citizens")
+        Group.objects.get_or_create(name="Issuing Organization")
+        return Response({"message": "User Groups have been created"})

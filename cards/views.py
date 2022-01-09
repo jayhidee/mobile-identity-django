@@ -1,15 +1,17 @@
 from django.core.checks import messages
+from django.template.loader import render_to_string
+from rest_framework import response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import authentication, permissions, serializers
 from rest_framework.authtoken.models import Token
+from django.forms.models import model_to_dict
+
 
 from organization.models import IssuingOrginization
-
-
 from .serializers import CardSerializer, CardOTPSerializer
 from .models import Cards, CardsOTP
 from logs.internal import UserAction
@@ -17,6 +19,7 @@ from otp_tokens.views import CardToken, OTP, otp_card
 from otp_tokens.models import CardToken
 from otp_tokens.serializers import CardTokenSerializer
 import datetime
+import imgkit
 
 
 class Cardz(APIView):
@@ -37,12 +40,13 @@ class Cardz(APIView):
         return Response({"message": "Your card has been added please do verify card"})
 
     def get(self, request):
-        org = Cards.objects.filter(user_id=request.user)
+        org = Cards.objects.filter(user_id=request.user).select_related(
+            'issuing_organization').values_list('card_id', 'date_expiring', 'date_issued', 'id', 'issuing_organization__name', 'issuing_organization__images')
         serializer = CardSerializer(org, many=True)
         # user action Log
         UserAction.objects.create(
             user_id=request.user, action="User viewed list of his card")
-        return Response(serializer.data)
+        return Response(org)
 
 
 class CardzD(APIView):
@@ -164,3 +168,84 @@ class CardOTP(APIView):
         UserAction.objects.create(
             user_id=request.user, action="User viewed list of his one time access")
         return Response(serializer.data)
+
+
+class DownloadCard(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        cardz = Cards.objects.filter(
+            card_id=request.data['card_id'], user_id=request.user).values()
+        d = list(cardz)
+
+        image = """
+                    <html>
+                        <head>
+
+
+
+                            <!--Fontawesome-->
+                            <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+
+                            <!-- Bootstrap core CSS -->
+                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+                            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+                            <style>
+                            #cs{
+                                width: 800px;
+                                height: 400px;
+                                margin: auto;
+                                background-image: url(https://res.cloudinary.com/gims/image/upload/v1639396599/int-pass_ud28p9.png);
+                                background-position: center;
+                                background-repeat: no-repeat;
+                            }
+                            </style>
+                        </head>
+
+                        <body>
+                            <div class="card p-5" id="cs">
+                                <div class="card-body">
+                                <div class="row">
+                                    <span class="col-2">
+                                    jj
+                                    </span>
+                                    <span class="col-10">
+                                    <h3><strong>Federal Republic of Nigeria</strong></h3>
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                    <img class="img-fluid" src="https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png">
+                                    <span></span>
+                                    </div>
+                                    <div class="col-8 my-4">
+                                    <h4><strong>ID:</strong>  {{card_id}}</h4>
+                                    <h4><strong>Name:</strong>  {{name}}</h4>
+                                    <h4><strong>Age:</strong>  {{age}}</h4>
+                                    <h4><strong>Address:</strong>  {{address}}</h4>
+                                    <h4><strong>Sex:</strong>  {{sex}}</h4>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+
+
+                            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+                            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+                            <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+                        </body>
+                    </html>
+
+                """
+        name = request.user.get_full_name,
+        age = 40
+        sex = "M"
+        address = "example address for the user and can be any length"
+        # card = renderer_classes("download_card.html", {
+        #                         'name': name, 'age': age, 'sex': sex, 'address': address, 'card_id': d[0]['card_id']})
+        config = imgkit.config(
+            wkhtmltoimage='/templates/card_id', xvfb='/opt/bin/xvfb-run')
+        imgkit.from_string(image, d[0]['card_id']+'-'+'.jpg', config=config)
+
+        return Response({'messages': list(cardz)})
