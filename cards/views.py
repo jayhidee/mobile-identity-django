@@ -21,7 +21,6 @@ from otp_tokens.views import CardToken, OTP, otp_card
 from otp_tokens.models import CardToken
 from otp_tokens.serializers import CardTokenSerializer
 import datetime
-import imgkit
 
 
 class Cardz(APIView):
