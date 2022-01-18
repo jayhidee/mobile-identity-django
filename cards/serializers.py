@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Cards, CardsOTP
+from .models import Cards, CardsOTP, CardsOffline
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -41,6 +41,19 @@ class CardOTPSerializer(serializers.ModelSerializer):
         model = CardsOTP
         fields = ['id', 'card_id', 'type', 'issuing_organization', 'first_name', 'last_name',
                   'to_date', 'from_date', 'email', 'phone_number', 'date_approved', 'approved', 'reason_for_visit']
+
+    def create(self, validated_data):
+        instance = self.Meta.model(**validated_data)
+        instance.save()
+        return instance
+
+
+class CardOfflineSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardsOffline
+
+        fields = ['id', 'card', 'user_id', 'image',
+                  'date_created', 'last_download', 'created', 'deleted']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)

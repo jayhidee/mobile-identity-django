@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Cardz, CardzD, CardzView, CardValidate, CardOTP, DownloadCard
+from .views import Cardz, CardzD, CardzView, CardValidate, CardOTP, DownloadCard, DownloadDeleteCard
 
 urlpatterns = [
     path('', Cardz.as_view()),
@@ -8,4 +8,5 @@ urlpatterns = [
     path('validate/', CardValidate.as_view()),
     path('otp/', CardOTP.as_view()),
     path('get-card/', DownloadCard.as_view()),
+    path('offline-card/<int:id>/', DownloadDeleteCard.as_view()),
 ]

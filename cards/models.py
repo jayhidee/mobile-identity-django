@@ -21,6 +21,22 @@ class Cards(models.Model):
         return self.card_id
 
 
+class CardsOffline(models.Model):
+    card = models.ForeignKey(Cards, on_delete=models.PROTECT)
+    user_id = models.ForeignKey(User, on_delete=models.PROTECT)
+    image = models.CharField(max_length=255, unique=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_download = models.DateTimeField()
+    created = models.BooleanField(null=True)
+    deleted = models.BooleanField(null=True)
+
+    class Meta:
+        ordering = ['date_created']
+
+    def __str__(self):
+        return self.card_id
+
+
 class CardsOTP(models.Model):
     card_id = models.CharField(max_length=255, unique=True)
     issuing_organization = models.ForeignKey(
