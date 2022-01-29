@@ -94,6 +94,62 @@ class LoginView(APIView):
             return response
 
 
+class UnlockView(APIView):
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = User.objects.filter(email=email).first()
+
+        if user is None:
+            raise AuthenticationFailed('User not found!')
+
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect email or password!')
+
+        # Token Check
+        if Token.objects.filter(user=user):
+            token = Token.objects.get(user=user)
+
+            response = Response()
+            # if
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {
+                'token': token.key,
+                'success': 'ture',
+                'user': {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                }
+            }
+            # user action Log
+            UserAction.objects.create(
+                user_id=user, action="User logged in")
+
+            return response
+        else:
+            token = Token.objects.create(user=user)
+
+            response = Response()
+            # if
+            response.set_cookie(key='jwt', value=token, httponly=True)
+            response.data = {
+                'token': token.key,
+                'success': 'ture',
+                'user': {
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                }
+            }
+            # user action Log
+            UserAction.objects.create(
+                user_id=user, action="User logged in")
+
+            return response
+
+
 class LogoutView(APIView):
 
     @permission_classes([IsAuthenticated])
