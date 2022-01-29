@@ -24,7 +24,7 @@ class Cards(models.Model):
 class CardsOffline(models.Model):
     card = models.ForeignKey(Cards, on_delete=models.PROTECT)
     user_id = models.ForeignKey(User, on_delete=models.PROTECT)
-    image = models.CharField(max_length=255, unique=True)
+    image = models.CharField(max_length=255)
     date_created = models.DateTimeField(auto_now_add=True)
     last_download = models.DateTimeField()
     created = models.BooleanField(null=True)
