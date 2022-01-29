@@ -246,7 +246,7 @@ class DownloadDeleteCard(APIView):
             return Response({"message": data.data})
 
     def delete(self, request, id):
-        checkForID = Cards.objects.filter(user_id=request.user, card_id=id)
+        checkForID = Cards.objects.filter(user_id=request.user, id=id)
 
         if not checkForID:
             return Response({"success": "false", "message": "Invalid Card selected"})
