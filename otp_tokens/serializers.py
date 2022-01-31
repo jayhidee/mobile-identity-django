@@ -5,7 +5,7 @@ from .models import UserActivation, CardToken, CardVerify
 class CardTokenSerializer(serializers.ModelSerializer):
     class Meta:
         model = CardToken
-        fields = ['card_id', 'otp', 'card_owner']
+        fields = ['card_id', 'otp', 'card_owner', 'hash']
 
     def create(self, validated_data):
         instance = self.Meta.model(**validated_data)

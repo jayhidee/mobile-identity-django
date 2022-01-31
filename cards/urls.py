@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import Cardz, CardzD, CardzView, CardValidate, CardOTP, DownloadCard, DownloadDeleteCard
+from .views import Cardz, CardzD, CardzView, CardValidate, CardOTP, DownloadCard, DownloadDeleteCard, GenerateQRCode
 
 urlpatterns = [
     path('', Cardz.as_view()),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('otp/', CardOTP.as_view()),
     path('get-card/', DownloadCard.as_view()),
     path('offline-card/<int:id>/', DownloadDeleteCard.as_view()),
+    path('create/<str:salted>/', GenerateQRCode.as_view()),
 ]

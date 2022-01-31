@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 class CardToken(models.Model):
     card_id = models.ForeignKey(Cards, on_delete=models.PROTECT)
     otp = models.CharField(max_length=20)
+    hash = models.CharField(max_length=220, default='s')
     card_owner = models.ForeignKey(User, on_delete=models.PROTECT)
     officer = models.IntegerField(null=True)
     date_used = models.DateTimeField(null=True)

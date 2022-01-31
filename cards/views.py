@@ -1,7 +1,10 @@
+import json
 from django.core.checks import messages
 from django.db.models.fields import DateTimeField
 from django.template import context
 from django.template.loader import render_to_string
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render
 from requests.api import delete
 from rest_framework import response
 from rest_framework.views import APIView
@@ -89,28 +92,28 @@ class CardzView(APIView):
 
     def get(self, request, id, card_id, *args, **kwargs):
         qs = Cards.objects.filter(card_id=card_id)
-        context = {}
         if qs:
             UserAction.objects.create(
                 user_id=request.user, action="User viewed his card with ID("+card_id + ")")
 
             cardsss = CardToken(card_owner=request.user)
-            newCardToken = {
+            hash = {
                 "card_id": id,
                 "otp": OTP(),
                 "card_owner": request.user.id
+            }
+            salted = make_password(json.dumps(hash))
+            newCardToken = {
+                "card_id": id,
+                "otp": OTP(),
+                "card_owner": request.user.id,
+                "hash": salted
             }
             serializer = CardTokenSerializer(data=newCardToken)
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-            factory = qrcode.image.svg.SvgImage
-            img = qrcode.make(
-                serializer.data, image_factory=factory, box_size=20)
-            stream = BytesIO()
-            img.save(stream)
-            context["svg"] = stream.getvalue().decode()
-            return Response(context)
+            return Response({"message": salted})
         else:
             return Response({"message": "Card with ID not found"})
 
@@ -253,3 +256,15 @@ class DownloadDeleteCard(APIView):
         else:
             CardsOffline.objects.filter(card_id=id).update(deleted=True)
             return Response({"success": "true", "message": "Card has been deleted"})
+
+
+class GenerateQRCode(APIView):
+    def get(self, request, salted):
+        context = {}
+        factory = qrcode.image.svg.SvgImage
+        img = qrcode.make(
+            salted, image_factory=factory, box_size=20)
+        stream = BytesIO()
+        img.save(stream)
+        context["svg"] = stream.getvalue().decode()
+        return render(request, 'download_card.html', context=context)
