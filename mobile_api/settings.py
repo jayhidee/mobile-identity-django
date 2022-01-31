@@ -142,20 +142,20 @@ WSGI_APPLICATION = 'mobile_api.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
+    #     'default': {
+    #         'ENGINE': 'django.db.backends.sqlite3',
+    #         'NAME': BASE_DIR / 'db.sqlite3',
+    #     }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-    # 'default': {
 
-    #     'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.postgresql',
 
-    #     'NAME': 'd8qbosbql9v4uh',
-    #     'USER': 'qldcxbqqqzqrql',
-    #     'PASSWORD': '0e591cd8a30c2cfc0086411769f702774787d37a7174cc066302b90113b10256',
-    #     'HOST': 'ec2-54-157-16-125.compute-1.amazonaws.com',
-    #     'PORT': '5432',
-    # },
+        'NAME': 'd8qbosbql9v4uh',
+        'USER': 'qldcxbqqqzqrql',
+        'PASSWORD': '0e591cd8a30c2cfc0086411769f702774787d37a7174cc066302b90113b10256',
+        'HOST': 'ec2-54-157-16-125.compute-1.amazonaws.com',
+        'PORT': '5432',
+    },
     # 'default': {
     #     'ENGINE': 'django.db.backends.oracle',
     #     'NAME': 'orcl',
