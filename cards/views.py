@@ -267,4 +267,18 @@ class GenerateQRCode(APIView):
         stream = BytesIO()
         img.save(stream)
         context["svg"] = stream.getvalue().decode()
-        return render(request, 'download_card.html', context=context)
+        HCTI_API_ENDPOINT = "https://hcti.io/v1/image"
+        # Retrieve these from https://htmlcsstoimage.com/dashboard
+        HCTI_API_USER_ID = '64046e10-8be7-4e35-b6ea-180706dd73fd'
+        HCTI_API_KEY = '7995399a-e729-4287-be06-b7a3b78e0a2b'
+
+        data = {'html': context,
+                'css': ".box { color: white; background: transparent; padding: 10px; font-family: Roboto }#cs{ width: 40vw; height: auto;  margin: auto; background-size: cover; background-image: url(https://res.cloudinary.com/gims/image/upload/v1639396599/int-pass_ud28p9.png); background-position: center; background-repeat: no-repeat; }",
+                'google_fonts': "Roboto"}
+        dd = requests.post(url=HCTI_API_ENDPOINT, data=data,
+                           auth=(HCTI_API_USER_ID, HCTI_API_KEY))
+
+        CardsOffline.objects.create(
+            card_id=d[0][3], user_id=request.user, image=dd.json()['url'], last_download=datetime.datetime.now(), created=True, deleted=False)
+
+        return Response({"download": dd.json()['url']})
