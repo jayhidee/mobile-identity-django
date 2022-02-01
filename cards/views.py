@@ -223,17 +223,17 @@ class DownloadCard(APIView):
 
         findOff = CardsOffline.objects.filter(
             card_id=d[0][3], deleted=False, user_id=request.user)
+        fullname = request.user.get_full_name()
 
-        if findCard:
-            return Response({"success": "false", "message": "You can only have one ofline card"})
-        elif findOff:
-            fullname = request.user.get_full_name()
-            data = CardOfflineSerializer(findOff, many=True)
+        if findOff:
             return Response({"success": "true", "message": d, "name": fullname})
         else:
-            CardsOffline.objects.create(
-                card_id=d[0][3], user_id=request.user, image="blank", last_download=datetime.datetime.now(), created=True, deleted=False)
-            return Response({"success": "true", "message": d, "name": request.user.get_full_name()})
+            if findCard:
+                return Response({"success": "false", "message": "You can only have one ofline card"})
+            else:
+                CardsOffline.objects.create(
+                    card_id=d[0][3], user_id=request.user, image="blank", last_download=datetime.datetime.now(), created=True, deleted=False)
+                return Response({"success": "true", "message": d, "name": fullname})
 
     def get(self, request):
         card = CardsOffline.objects.filter(user_id=request.user)
