@@ -113,7 +113,28 @@ class CardzView(APIView):
             serializer.is_valid(raise_exception=True)
             serializer.save()
 
-            return Response({"message": salted})
+            context = {}
+
+            factory = qrcode.image.svg.SvgImage
+            img = qrcode.make(
+                salted, image_factory=factory, box_size=20)
+            stream = BytesIO()
+            img.save(stream)
+            context["svg"] = stream.getvalue().decode()
+            HCTI_API_ENDPOINT = "https://hcti.io/v1/image"
+            # Retrieve these from https://htmlcsstoimage.com/dashboard
+            HCTI_API_USER_ID = '64046e10-8be7-4e35-b6ea-180706dd73fd'
+            HCTI_API_KEY = '7995399a-e729-4287-be06-b7a3b78e0a2b'
+
+            data = {'html': context,
+                    'css': ".box { color: white; background: transparent; padding: 10px; font-family: Roboto }#cs{ width: 40vw; height: auto;  margin: auto; background-size: cover; background-image: url(https://res.cloudinary.com/gims/image/upload/v1639396599/int-pass_ud28p9.png); background-position: center; background-repeat: no-repeat; }",
+                    'google_fonts': "Roboto"}
+            dd = requests.post(url=HCTI_API_ENDPOINT, data=data,
+                               auth=(HCTI_API_USER_ID, HCTI_API_KEY))
+
+            return Response({"download": dd.json()['url']})
+
+            # return Response({"message": salted})
         else:
             return Response({"message": "Card with ID not found"})
 
