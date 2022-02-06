@@ -117,10 +117,11 @@ class CardzView(APIView):
 
             factory = qrcode.image.svg.SvgImage
             img = qrcode.make(
-                salted, image_factory=factory, box_size=20)
+                {"hash": salted, "card_id": id}, image_factory=factory, box_size=20)
             stream = BytesIO()
             img.save(stream)
             context["svg"] = stream.getvalue().decode()
+
             HCTI_API_ENDPOINT = "https://hcti.io/v1/image"
             # Retrieve these from https://htmlcsstoimage.com/dashboard
             HCTI_API_USER_ID = '64046e10-8be7-4e35-b6ea-180706dd73fd'
@@ -145,7 +146,7 @@ class CardValidate(APIView):
 
     def post(self, request):
         token_validity = CardToken.objects.filter(
-            card_id=request.data['card_id'],  valied=True, date_expiring__gte=datetime.datetime.now())
+            hash=request.data['hash'],  valied=True, date_expiring__gte=datetime.datetime.now())
         if token_validity:
             card_det = Cards.objects.filter(
                 id=request.data['card_id']).select_related('issuing_organization').values_list('card_id', 'issuing_organization__name')
