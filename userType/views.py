@@ -1,97 +1,98 @@
+import json
+from django.db.models.fields import DateTimeField
+from rest_framework import response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import authentication, permissions, serializers
 from rest_framework.authtoken.models import Token
+import requests
 
 
-from .serializers import OrgSerializer, OrgSerializerO
-from .models import IssuingOrginization, IssuingOrginizationOTP
-from logs.models import UserAction
+from .serializers import VertingOrgSerializer, VertingOrgRankSerializer, UserOfficerSerializer
+from .models import UserOfficer, VertingOrganization, VertingOrganizationRank
+from logs.internal import UserAction
+from otp_tokens.views import CardToken, OTP, otp_card
+from otp_tokens.models import CardToken
+from otp_tokens.serializers import CardTokenSerializer
+import datetime
 
 
-class IssOrg(APIView):
+class VertingOrgView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        serializer = OrgSerializer(data=request.data)
+        serializer = VertingOrgSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User Created Organization (" + request.data['name'] + ")")
+            user_id=request.user, action="User Created Verting Organization (" + request.data['name'] + ")")
         return Response(serializer.data)
 
     def get(self, request):
-        org = IssuingOrginization.objects.all()
-        serializer = OrgSerializer(org, many=True)
-        # user action Log
-        UserAction.objects.create(
-            user_id=request.user, action="User viewed the list of organization")
+        vert = VertingOrganization.objects.all()
+        serializer = VertingOrgSerializer(vert, many=True)
         return Response(serializer.data)
 
 
-class IssOrgD(APIView):
+class VertingOrgDView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def patch(self, request, id, *args, **kwargs):
-        data = request.data
-        qs = IssuingOrginization.objects.get(id=id)
-        serializer = OrgSerializer(instance=qs, data=data)
+        qs = VertingOrganization.objects.get(id=id)
+        serializer = VertingOrgSerializer(instance=qs, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User Edited Organization (" + qs.name + ")")
+            user_id=request.user, action="User Edited Verting Organization (" + request.data['name'] + ")")
         return Response(serializer.data)
 
     def get(self, request, id, *args, **kwargs):
-        org = IssuingOrginization.objects.filter(id=id)
-        serializer = OrgSerializer(org, many=True)
+        vert = VertingOrganization.objects.filter(id=id)
+        serializer = VertingOrgSerializer(vert, many=True)
         return Response(serializer.data)
 
 
-class IssOrgO(APIView):
+class VertingRankOrgView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request):
-        serializer = OrgSerializerO(data=request.data)
+        serializer = VertingOrgRankSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User Created Organization (" + request.data['name'] + ")")
+            user_id=request.user, action="User Created Verting Organization Rank (" + request.data['name'] + ")")
         return Response(serializer.data)
 
     def get(self, request):
-        org = IssuingOrginizationOTP.objects.all()
-        serializer = OrgSerializerO(org, many=True)
+        vert = VertingOrganizationRank.objects.all()
+        serializer = VertingOrgRankSerializer(vert, many=True)
         return Response(serializer.data)
 
 
-class IssOrgDO(APIView):
+class VertingOrgRankDView(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated,)
 
     def patch(self, request, id, *args, **kwargs):
-        data = request.data
-        qs = IssuingOrginizationOTP.objects.get(id=id)
-        serializer = OrgSerializerO(instance=qs, data=data)
+        qs = VertingOrganizationRank.objects.get(id=id)
+        serializer = VertingOrgRankSerializer(instance=qs, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-
         # user action Log
         UserAction.objects.create(
-            user_id=request.user, action="User Edited Organization (" + qs.name + ")")
+            user_id=request.user, action="User Edited Verting Organization (" + request.data['name'] + ")")
         return Response(serializer.data)
 
     def get(self, request, id, *args, **kwargs):
-        org = IssuingOrginizationOTP.objects.filter(id=id)
-        serializer = OrgSerializerO(org, many=True)
+        vert = VertingOrganizationRank.objects.filter(id=id)
+        serializer = VertingOrgRankSerializer(vert, many=True)
         return Response(serializer.data)

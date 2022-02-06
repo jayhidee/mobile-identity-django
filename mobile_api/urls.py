@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/org/', include('organization.urls')),
     path('api/cards/', include('cards.urls')),
     path('api/logs/', include('logs.urls')),
+    path('api/uzer/', include('userType.urls')),
     path("robots.txt", TemplateView.as_view(
         template_name="templates/robots.txt", content_type="text/plain")),
 ]

@@ -8,6 +8,9 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
+from userType.models import UserOfficer
+
+from userType.serializers import UserOfficerSerializer
 
 from .serializers import UserSerializer
 from .models import User
@@ -170,3 +173,101 @@ class CreateGroups(APIView):
         Group.objects.get_or_create(name="Citizens")
         Group.objects.get_or_create(name="Issuing Organization")
         return Response({"message": "User Groups have been created"})
+
+
+class RegisterOfficerView(APIView):
+    def post(self, request):
+        userData = {
+            "email": request.data['email'],
+            "first_name": request.data['first_name'],
+            "last_name": request.data['last_name'],
+            "password": request.data['password']
+        }
+        serializer = UserSerializer(data=userData)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        position = {
+            'user': serializer.data['id'],
+            'verting_org': request.data['verting_org'],
+            'position': request.data['position']
+        }
+        userT = UserOfficerSerializer(data=position)
+        userT.is_valid(raise_exception=True)
+        userT.save()
+
+        res = {
+            'otp': '',
+            'user': serializer.data['id'],
+            'email': request.data['email'],
+            'name': request.data['first_name'] + " " + request.data['last_name']
+        }
+        # user action Log
+        # UserAction.objects.create(
+        #     user_id=serializer.data['id'], action="User create a new account")
+
+        if UseAct(res) == True:
+            return Response({'message': 'Thanks for regestring. Please check your mail to activate your account.'})
+        else:
+            return Response({'message': 'Thanks for regestring. Please Try requesting for token again'})
+
+
+class LoginOfficerView(APIView):
+    def post(self, request):
+        email = request.data['email']
+        password = request.data['password']
+
+        user = User.objects.filter(email=email).first()
+
+        user_type = UserOfficer.objects.filter(user=user)
+
+        if user is None:
+            raise AuthenticationFailed('User not found!')
+
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect email or password!')
+
+        if user_type:
+            # Token Check
+            if Token.objects.filter(user=user):
+                token = Token.objects.get(user=user)
+
+                response = Response()
+                # if
+                response.set_cookie(key='jwt', value=token, httponly=True)
+                response.data = {
+                    'token': token.key,
+                    'success': 'ture',
+                    'user': {
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'email': user.email,
+                    }
+                }
+                # user action Log
+                UserAction.objects.create(
+                    user_id=user, action="User logged in")
+
+                return response
+            else:
+                token = Token.objects.create(user=user)
+
+                response = Response()
+                # if
+                response.set_cookie(key='jwt', value=token, httponly=True)
+                response.data = {
+                    'token': token.key,
+                    'success': 'ture',
+                    'user': {
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'email': user.email
+                    }
+                }
+                # user action Log
+                UserAction.objects.create(
+                    user_id=user, action="User logged in")
+
+                return response
+        else:
+            raise AuthenticationFailed('User type not allowed')
