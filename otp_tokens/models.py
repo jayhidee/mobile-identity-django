@@ -2,6 +2,7 @@ from django.db import models
 from user.models import User
 from cards.models import Cards
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 
 # Create your models here.
@@ -15,7 +16,7 @@ class CardToken(models.Model):
     officer = models.IntegerField(null=True)
     date_used = models.DateTimeField(null=True)
     valied = models.BooleanField(default=True)
-    date_issued = models.DateTimeField(auto_now_add=True)
+    date_issued = models.DateTimeField(default=timezone.now())
     date_expiring = models.DateTimeField(
         default=datetime.now() + timedelta(hours=0, minutes=6, seconds=0))
 
