@@ -25,7 +25,6 @@ from otp_tokens.views import CardToken, OTP, otp_card
 from otp_tokens.models import CardToken
 from otp_tokens.serializers import CardTokenSerializer
 import datetime
-from datetime import timedelta
 
 import qrcode
 import qrcode.image.svg
@@ -147,7 +146,7 @@ class CardValidate(APIView):
 
     def post(self, request):
         token_validity = CardToken.objects.filter(
-            hash=request.data['hash'],  valied=True, date_expiring__gte=datetime.now() - timedelta(minutes=60))
+            hash=request.data['hash'],  valied=True, date_expiring__gte=datetime.datetime.now())
         if token_validity:
             card_det = Cards.objects.filter(
                 id=request.data['card_id']).select_related('issuing_organization').values_list('card_id', 'issuing_organization__name')
