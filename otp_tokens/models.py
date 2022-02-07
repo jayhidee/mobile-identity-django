@@ -15,7 +15,8 @@ class CardToken(models.Model):
     officer = models.IntegerField(null=True)
     date_used = models.DateTimeField(null=True)
     valied = models.BooleanField(default=True)
-    date_issued = models.DateTimeField(auto_now_add=True)
+    date_issued = models.DateTimeField(
+        auto_now_add=True, default=datetime.now())
     date_expiring = models.DateTimeField(
         default=datetime.now()+timedelta(minutes=6))
 
